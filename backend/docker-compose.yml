@@ -1,0 +1,107 @@
+version: "3.9"
+
+networks:
+  feednet:
+    driver: bridge
+
+volumes:
+  miniflux-db:
+  rsshub-redis:
+
+services:
+
+  # ── Postgres ────────────────────────────────────────────────────────────────
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: miniflux
+    volumes:
+      - miniflux-db:/var/lib/postgresql/data
+    networks:
+      - feednet
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Miniflux ─────────────────────────────────────────────────────────────────
+  miniflux:
+    image: miniflux/miniflux:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # Bound to localhost only. To expose publicly change to "0.0.0.0:8080:8080"
+      # and put a reverse proxy (nginx/caddy) in front.
+      - "127.0.0.1:8080:8080"
+    environment:
+      DATABASE_URL: "postgres://miniflux:${POSTGRES_PASSWORD}@db/miniflux?sslmode=disable"
+      RUN_MIGRATIONS: "1"
+      CREATE_ADMIN: "1"
+      ADMIN_USERNAME: ${MINIFLUX_ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD}
+      BASE_URL: ${MINIFLUX_BASE_URL:-http://localhost:8080/}
+      # Required so Miniflux fetches RSSHub on the internal docker network (172.x).
+      # Without this flag Miniflux refuses RFC-1918 addresses.
+      FETCHER_ALLOW_PRIVATE_NETWORKS: "1"
+      # Uncomment to route ALL fetches through the gost HTTP proxy.
+      # Per-feed routing is better: add individual feeds with fetch_via_proxy=true.
+      # HTTP_CLIENT_PROXY: "http://gost:8118"
+    networks:
+      - feednet
+
+  # ── RSSHub ───────────────────────────────────────────────────────────────────
+  rsshub:
+    image: diygod/rsshub:latest
+    restart: unless-stopped
+    depends_on:
+      - redis
+    # Port exposed to localhost for debugging. Internal consumers (Miniflux)
+    # reach RSSHub via http://rsshub:1200 on the feednet network.
+    # Comment out the ports block if you don't need localhost access.
+    ports:
+      - "127.0.0.1:1200:1200"
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      REDIS_URL: redis://redis:6379/
+    networks:
+      - feednet
+
+  # ── Redis (RSSHub cache) ──────────────────────────────────────────────────────
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    volumes:
+      - rsshub-redis:/data
+    networks:
+      - feednet
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── gost (optional firewall proxy) ───────────────────────────────────────────
+  # Only started when you pass --profile proxy, e.g.:
+  #   docker compose --profile proxy up -d
+  #
+  # This bridges an upstream SOCKS5 proxy to a local HTTP proxy on :8118 so
+  # Miniflux's Go HTTP client (which doesn't speak SOCKS5) can route through it.
+  # Typical use: add blocked feeds via the Miniflux UI with "fetch_via_proxy" ON,
+  # and (optionally) set HTTP_CLIENT_PROXY above to make it the default.
+  #
+  # Requires UPSTREAM_SOCKS5 in .env, e.g.:  socks5://user:pass@host:1080
+  gost:
+    image: ginuerzh/gost:latest
+    restart: unless-stopped
+    profiles:
+      - proxy
+    command: ["-L", "http://:8118", "-F", "${UPSTREAM_SOCKS5}"]
+    networks:
+      - feednet

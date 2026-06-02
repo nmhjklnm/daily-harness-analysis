@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Starter feed list for daily-harness-analysis.
+  Import via: bootstrap.sh (automatic) or Miniflux Settings → Import/Export.
+
+  RSSHub feeds (http://rsshub:1200/...) are fetched over the internal docker
+  network — they do NOT go through any proxy (fetch_via_proxy=false, the default).
+  Do not add these feeds with "fetch_via_proxy" enabled.
+-->
+<opml version="2.0">
+  <head>
+    <title>Daily Harness — Starter Feeds</title>
+  </head>
+  <body>
+
+    <outline text="News" title="News">
+      <outline
+        type="rss"
+        text="Hacker News — Front Page"
+        title="Hacker News — Front Page"
+        xmlUrl="https://hnrss.org/frontpage"
+        htmlUrl="https://news.ycombinator.com/"
+      />
+      <outline
+        type="rss"
+        text="Hacker News — Best"
+        title="Hacker News — Best"
+        xmlUrl="https://hnrss.org/best"
+        htmlUrl="https://news.ycombinator.com/best"
+      />
+    </outline>
+
+    <outline text="Papers" title="Papers">
+      <outline
+        type="rss"
+        text="arXiv — cs.AI"
+        title="arXiv — cs.AI"
+        xmlUrl="http://export.arxiv.org/rss/cs.AI"
+        htmlUrl="https://arxiv.org/list/cs.AI/recent"
+      />
+      <outline
+        type="rss"
+        text="arXiv — cs.LG"
+        title="arXiv — cs.LG"
+        xmlUrl="http://export.arxiv.org/rss/cs.LG"
+        htmlUrl="https://arxiv.org/list/cs.LG/recent"
+      />
+      <!-- Internal RSSHub feed — fetch_via_proxy must be OFF (default) -->
+      <outline
+        type="rss"
+        text="Hugging Face — Daily Papers (via RSSHub)"
+        title="Hugging Face — Daily Papers (via RSSHub)"
+        xmlUrl="http://rsshub:1200/huggingface/daily-papers"
+        htmlUrl="https://huggingface.co/papers"
+      />
+    </outline>
+
+    <outline text="Blogs" title="Blogs">
+      <outline
+        type="rss"
+        text="Simon Willison's Weblog"
+        title="Simon Willison's Weblog"
+        xmlUrl="https://simonwillison.net/atom/everything/"
+        htmlUrl="https://simonwillison.net/"
+      />
+      <outline
+        type="rss"
+        text="Lilian Weng — Lil'Log"
+        title="Lilian Weng — Lil'Log"
+        xmlUrl="https://lilianweng.github.io/index.xml"
+        htmlUrl="https://lilianweng.github.io/"
+      />
+      <outline
+        type="rss"
+        text="Hugging Face Blog"
+        title="Hugging Face Blog"
+        xmlUrl="https://huggingface.co/blog/feed.xml"
+        htmlUrl="https://huggingface.co/blog"
+      />
+    </outline>
+
+    <outline text="Open Source" title="Open Source">
+      <!-- Internal RSSHub feed — fetch_via_proxy must be OFF (default) -->
+      <outline
+        type="rss"
+        text="GitHub Trending — Python (daily, via RSSHub)"
+        title="GitHub Trending — Python (daily, via RSSHub)"
+        xmlUrl="http://rsshub:1200/github/trending/daily/python"
+        htmlUrl="https://github.com/trending/python"
+      />
+      <outline
+        type="rss"
+        text="GitHub Trending — All languages (daily, via RSSHub)"
+        title="GitHub Trending — All languages (daily, via RSSHub)"
+        xmlUrl="http://rsshub:1200/github/trending/daily"
+        htmlUrl="https://github.com/trending"
+      />
+    </outline>
+
+  </body>
+</opml>

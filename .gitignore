@@ -1,0 +1,27 @@
+# secrets / local config
+.env
+*.env
+!.env.example
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.uv/
+
+# per-day pipeline artifacts (generated)
+daily/
+
+# generated site output (build.py / build_index.py write these)
+site/*.html
+site/assets/thumbs/
+site/assets/search-index.json
+site/media.json
+
+# deploy provider state
+.vercel/
+.netlify/
+node_modules/
+
+# os
+.DS_Store
