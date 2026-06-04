@@ -30,7 +30,7 @@ DEFAULT_DATE = "2026-05-29"
 # path), keep the original hand-written title so default runs stay identical.
 DEFAULT_TITLE = "运行时评测、harness 效应与 agent skill 供应链"
 # Asset cache-bust version (kept in sync with index.html refs).
-DEFAULT_ASSET_V = 18
+DEFAULT_ASSET_V = 19
 
 _B = branding()
 BRAND = _B["brand"]

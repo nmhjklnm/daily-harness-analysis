@@ -790,6 +790,16 @@ a { color: inherit; text-decoration: none; }
 .issue-row__time {
   font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-4);
 }
+/* Narrow viewports can't fit date + a full CJK title + one-line meta in the
+   3-col row: the meta's max-content starves the 1fr title down to its CJK
+   min-content (one char), so the title renders VERTICALLY (one glyph/line).
+   Stack the meta onto its own row before that happens — well above the 30rem
+   mobile breakpoint — so the title keeps a full-width line. */
+@media (max-width: 44rem) {
+  .issue-row { grid-template-columns: auto 1fr; }
+  .issue-row__n { display: none; }
+  .issue-row__meta { grid-column: 1 / -1; justify-self: start; margin-top: 0.3rem; }
+}
 
 /* Archive when it lives in the right page rail: no top margin, anchor offset
    below the sticky masthead. */
@@ -1604,11 +1614,6 @@ ul.metastrip__chips .metastrip__catn {
   .count:last-child { border-right: 0; }
   .count:nth-child(n+4) { border-top: var(--hairline) solid var(--line); }
   .ref { grid-template-columns: 2rem minmax(0, 1fr); }
-  .issue-row { grid-template-columns: auto 1fr; }
-  .issue-row__n { display: none; }
-  .issue-row__meta {
-    grid-column: 1 / -1; justify-self: start; margin-top: 0.3rem;
-  }
   .foot__main { gap: 1.4rem; }
   .foot__bar { flex-direction: column; gap: 0.4rem; }
 }
