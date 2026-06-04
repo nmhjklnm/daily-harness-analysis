@@ -41,7 +41,7 @@ from dha_config import branding
 
 # Asset cache-bust version. Keep in sync with build.py's DEFAULT_ASSET_V so the
 # landing + archive + issue pages all request the same css/js build.
-ASSET_V = 18
+ASSET_V = 19
 
 # Brand / positioning copy. Single source of truth for the landing — all derived
 # from branding() so nothing is hardcoded to one deployment.
