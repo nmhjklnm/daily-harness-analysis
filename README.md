@@ -88,6 +88,16 @@ admin credentials — see [backend/README.md](backend/README.md).
 - **Editorial direction** — `pipeline/interests.md` is the guidance the LLM follows when curating. Put the topics you care about there.
 - **Look & branding** — set `SITE_BRAND` / `SITE_TAGLINE` / `SITE_REPO_URL`; deeper theme changes live in `site/assets/style.css` and `site/build*.py`.
 
+## Agent companion
+
+The pipeline publishes an agent-readable feed at `$SITE_DOMAIN/ideas/index.json`
+(a manifest) plus per-date slices — so a coding agent can read your digest and
+apply it, not just a human. [`skills/mindful`](skills/mindful/SKILL.md) is a
+ready [Claude Code skill](https://docs.claude.com/en/docs/claude-code/skills)
+that does exactly that: it reads the manifest, pulls the day(s) it needs, and
+connects the few items relevant to what you're working on to the task at hand.
+Drop it in `.claude/skills/`, set the site URL inside, and run `/mindful`.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Bundled Geist fonts are © Vercel under the SIL Open Font License 1.1.
